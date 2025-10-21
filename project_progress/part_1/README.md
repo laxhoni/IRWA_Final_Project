@@ -23,6 +23,7 @@ Before running the notebook, install the required libraries:
 ```bash
 pip install pandas numpy matplotlib nltk wordcloud
 
+```
 
 Then, download the necessary NLTK resources:
 
@@ -31,3 +32,4 @@ import nltk
 nltk.download('punkt')
 nltk.download('stopwords')
 nltk.download('punkt_tab')
+```
