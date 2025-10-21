@@ -10,7 +10,7 @@ GitHub: [https://github.com/laxhoni/IRWA_Final_Project](https://github.com/laxho
 
 ## 👥 Authors
 - **Jhonatan Barcos Gambaro** (u198728)  
-- **Daniel Alexander Yearwood** (u2144976)
+- **Daniel Alexander Yearwood Agames** (u214976)
 
 ---
 
