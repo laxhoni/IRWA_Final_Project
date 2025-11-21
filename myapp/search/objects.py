@@ -103,6 +103,9 @@ class ResultItem(BaseModel):
     description: Optional[str] = None
     url: Optional[str] = None
     ranking: Optional[float] = None
+    actual_price: Optional[float] = None
+    average_rating: Optional[float] = None
+    images: Optional[List[str]] = None
 
     def __str__(self) -> str:
         return self.model_dump_json(indent=2)

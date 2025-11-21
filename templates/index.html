@@ -3,15 +3,22 @@
 {% block content %}
     <div class="centered">
         <p>&nbsp;</p>
-        <p>&nbsp;</p>
-        <p>&nbsp;</p>
-        <form class="d-flex" method="POST" onSubmit='return validate();' action="/search">
-            <input class="form-control me-2" name="search-query" type="search" placeholder="Search" aria-label="Search"
-                   autofocus="autofocus">
-            <button class="btn btn-primary" type="submit" onclick='this.form.submit();'>Search</button>
-            <input name="upf-irwa-hidden" type="hidden" value="123">
+        <h1 class="text-center mb-4">Fashion Search 👗</h1>
+        
+        <form class="d-flex justify-content-center" method="GET" action="/search">
+            
+            <input class="form-control me-2" name="search-query" type="search" 
+                   placeholder="Search for jeans, shirts..." aria-label="Search"
+                   autofocus="autofocus" style="max-width: 400px;">
+            
+            <select name="algorithm" class="form-control me-2" style="max-width: 150px;">
+                <option value="bm25">BM25</option>
+                <option value="your_score">Your Score</option>
+            </select>
+
+            <button class="btn btn-primary" type="submit">Search</button>
         </form>
-        <p>&nbsp;</p>
+        
         <p>&nbsp;</p>
         <p>&nbsp;</p>
     </div>

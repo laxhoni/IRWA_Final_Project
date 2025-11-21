@@ -1,18 +1,40 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Document Detail - IRWA Search Engine</title>
-</head>
-<body>
-<div><a href="/" >Home</a></div>
-<div><a href="/stats" >Stats</a></div>
-<div><a href="/dashboard" >Dashboard</a></div>
-<h1>Document Detail Page</h1>
-<p>This is a placeholder for document details.</p>
-<p>Here you can display more information about the document.</p>
-<p>For example, you might show the full text of the document, metadata, or other relevant details.</p>
-<p>You can also include links to related documents or resources.</p>
-<p>Feel free to customize this page to fit the needs of your application.</p>
-</body>
-</html>
+{% extends "base.html" %}
+{% block page_title %}{{ product.title }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <a href="javascript:history.back()" class="btn btn-outline-primary mb-3">&larr; Back to Results</a>
+
+    <div class="row">
+        <div class="col-md-6">
+            {% if images and images|length > 0 %}
+                <img src="{{ images[0] }}" class="img-fluid rounded shadow-sm" alt="Product Image">
+            {% else %}
+                <div class="bg-light d-flex align-items-center justify-content-center rounded" style="height: 300px;">
+                    No Image Available
+                </div>
+            {% endif %}
+        </div>
+        <div class="col-md-6">
+            <h2 class="text-primary">{{ product.title }}</h2>
+            <p class="text-muted">PID: {{ product.pid }}</p>
+            
+            <div class="my-3">
+                <h3 class="text-danger">{{ product.actual_price }} <small class="text-muted text-decoration-line-through">{{ product.selling_price }}</small></h3>
+                <span class="badge badge-warning">★ {{ product.average_rating }} Rating</span>
+                <span class="badge badge-info">{{ product.brand }}</span>
+            </div>
+
+            <h4>Description</h4>
+            <p>{{ product.description }}</p>
+            
+            <hr>
+            <h5>Details</h5>
+            <ul>
+                <li><strong>Category:</strong> {{ product.category }} / {{ product.sub_category }}</li>
+                <li><strong>Seller:</strong> {{ product.seller }}</li>
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}
