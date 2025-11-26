@@ -102,6 +102,7 @@ class ResultItem(BaseModel):
     title: str
     description: Optional[str] = None
     url: Optional[str] = None
+    details_url: Optional[str] = None
     ranking: Optional[float] = None
     actual_price: Optional[float] = None
     average_rating: Optional[float] = None

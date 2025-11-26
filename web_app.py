@@ -1,5 +1,6 @@
 import os
 from json import JSONEncoder
+import uuid
 
 import httpagentparser  # for getting the user agent as json
 from flask import Flask, render_template, session, request, redirect, url_for
@@ -78,6 +79,18 @@ def index():
     agent = httpagentparser.detect(user_agent)
 
     print("Remote IP: {} - JSON user browser {}".format(user_ip, agent))
+
+
+    if "analytics_session_id" not in session:
+        session["analytics_session_id"] = str(uuid.uuid4())
+    analytics_session_id = session["analytics_session_id"]
+
+    analytics_data.register_session(
+        analytics_session_id,
+        user_ip,
+        agent
+    )
+
     return render_template('index.html', page_title="Welcome")
 
 
@@ -91,8 +104,11 @@ def search_form_post():
     session['last_search_query'] = search_query
 
     # 1. Analytics
-    search_id = analytics_data.save_query_terms(search_query)
-
+    analytics_session_id = session.get("analytics_session_id")
+    search_id = analytics_data.save_query_terms(
+        search_query,
+        session_id=analytics_session_id
+    )
     # 2. Search Engine
     # ---> CAMBIO CLAVE AQUÍ: Leer el algoritmo <---
     algorithm = request.args.get('algorithm') or request.form.get('algorithm')
@@ -208,11 +224,15 @@ def dashboard():
     # 2. Generar el gráfico (ESTO FALTABA)
     chart_json = analytics_data.plot_number_of_views()
 
+    sessions_chart_json = analytics_data.plot_queries_per_session()
+
+
     # 3. Renderizar pasando AMBAS variables
     return render_template(
         'dashboard.html', 
         visited_docs=visited_docs, 
-        chart_json=chart_json  # <--- ¡Esta es la clave del error!
+        chart_json=chart_json,  # <--- ¡Esta es la clave del error!
+        sessions_chart_json=sessions_chart_json
     )
 
 

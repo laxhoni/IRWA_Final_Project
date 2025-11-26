@@ -15,6 +15,9 @@ class AnalyticsData:
         self.fact_clicks = {} # {doc_id: count}
         self.fact_queries = [] # List of dicts
         self.last_query_id = 0
+
+        # {session_id: {session_id, user_ip, browser, os, start_time, query_count}}
+        self.fact_sessions = {}
         
         # Load existing data if file exists
         self.load_data()
@@ -28,7 +31,10 @@ class AnalyticsData:
                     self.fact_clicks = data.get('fact_clicks', {})
                     self.fact_queries = data.get('fact_queries', [])
                     self.last_query_id = data.get('last_query_id', 0)
-                print(f"Analytics loaded: {len(self.fact_clicks)} docs clicked.")
+                    self.fact_sessions = data.get('fact_sessions', {})
+                print(f"Analytics loaded: {len(self.fact_clicks)} docs clicked,"
+                      f"{len(self.fact_sessions)} sessions.")
+                
             except Exception as e:
                 print(f"Error loading analytics: {e}")
 
@@ -37,7 +43,8 @@ class AnalyticsData:
         data = {
             'fact_clicks': self.fact_clicks,
             'fact_queries': self.fact_queries,
-            'last_query_id': self.last_query_id
+            'last_query_id': self.last_query_id,
+            'fact_sessions': self.fact_sessions
         }
         try:
             # Ensure directory exists
@@ -47,7 +54,34 @@ class AnalyticsData:
         except Exception as e:
             print(f"Error saving analytics: {e}")
 
-    def save_query_terms(self, terms: str) -> int:
+
+    def register_session(self, session_id: str, user_ip: str, agent: dict):
+        """
+        Registra una sesión física (time-based) si no existe.
+        """
+        if not session_id:
+            return
+
+        if session_id not in self.fact_sessions:
+            browser = None
+            os_name = None
+            try:
+                browser = agent.get("browser", {}).get("name")
+                os_name = agent.get("os", {}).get("name")
+            except Exception:
+                pass
+
+            self.fact_sessions[session_id] = {
+                "session_id": session_id,
+                "user_ip": user_ip,
+                "browser": browser,
+                "os": os_name,
+                "start_time": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                "query_count": 0,
+            }
+            self.save_data()            
+
+    def save_query_terms(self, terms: str,  session_id: str = None) -> int:
         """
         Saves the user query and returns a unique search_id
         """
@@ -58,6 +92,13 @@ class AnalyticsData:
             'terms': terms,
             'timestamp': datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         }
+
+        if session_id:
+            new_query['session_id'] = session_id
+            if session_id in self.fact_sessions:
+                self.fact_sessions[session_id]['query_count'] = \
+                    self.fact_sessions[session_id].get('query_count', 0) + 1
+                
         
         self.fact_queries.append(new_query)
         self.save_data() # Persist to disk
@@ -75,7 +116,6 @@ class AnalyticsData:
         
         self.save_data() # Persist to disk
 
-    # --- AQUESTA ÉS LA FUNCIÓ QUE ET FALTAVA ---
     def plot_number_of_views(self):
         """
         Generates a bar chart of document views using Altair.
@@ -103,6 +143,38 @@ class AnalyticsData:
         ).interactive()
         
         return chart.to_json() # Return JSON specification
+
+    def plot_queries_per_session(self):
+        """
+        Bar chart del número de queries por sesión (time-based sessions).
+        """
+        if not self.fact_sessions:
+            return None
+
+        data = []
+        for sid, sess in self.fact_sessions.items():
+            data.append({
+                "Session ID": sid[:8],  # recortamos para que no sea larguísimo
+                "Queries": sess.get("query_count", 0),
+            })
+
+        if not data:
+            return None
+
+        df = pd.DataFrame(data)
+        df = df.sort_values(by='Queries', ascending=False).head(20)
+
+        chart = alt.Chart(df).mark_bar().encode(
+            x=alt.X('Session ID', sort='-y'),
+            y='Queries',
+            tooltip=['Session ID', 'Queries']
+        ).properties(
+            title='Number of Queries per Session',
+            width='container',
+            height=300
+        ).interactive()
+
+        return chart.to_json()
 
 class ClickedDoc:
     def __init__(self, doc_id, description, counter):

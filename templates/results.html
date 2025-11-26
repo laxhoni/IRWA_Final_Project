@@ -9,7 +9,7 @@
         <div><a href="/" class="btn btn-sm btn-outline-secondary">New Search</a></div>
     </div>
     
-{% if rag_response %}
+    {% if rag_response %}
         <div class="alert alert-info shadow-sm">
             <h5 class="alert-heading">🤖 AI Summary:</h5>
             <p>{{ rag_response | safe }}</p>
@@ -19,19 +19,68 @@
 
     {% for item in results_list %}
         <div class="card mb-3">
-            <div class="card-body">
-                <h5 class="card-title">
-                    <a href="{{ item.url }}" class="text-decoration-none">{{ item.title }}</a>
-                </h5>
-                <h6 class="card-subtitle mb-2 text-muted">
-                    {% if item.ranking %} Score: {{ "%.4f"|format(item.ranking) }} | {% endif %}
-                    ID: {{ item.pid }}
-                </h6>
-                <p class="card-text">{{ item.description[:200] }}...</p>
-                
+            <div class="card-body d-flex justify-content-between">
+                <div class="flex-grow-1 me-3">
+                    <h5 class="card-title">
+                        <a href="{{ item.details_url }}" class="text-decoration-none">
+                            {{ item.title }}
+                        </a>
+                    </h5>
+
+                    <h6 class="card-subtitle mb-2 text-muted">
+                        {% if item.ranking %} Score: {{ "%.4f"|format(item.ranking) }} | {% endif %}
+                        ID: {{ item.pid }}
+                    </h6>
+
+                    {% if item.actual_price or item.selling_price %}
+                        <p class="mb-1">
+                            {% if item.actual_price %}
+                                <strong>{{ item.actual_price }}€</strong>
+                            {% endif %}
+                            {% if item.selling_price %}
+                                <span class="text-muted text-decoration-line-through">
+                                    {{ item.selling_price }}€
+                                </span>
+                            {% endif %}
+                            {% if item.discount %}
+                                <span class="badge bg-success ms-2">
+                                    -{{ item.discount }}%
+                                </span>
+                            {% endif %}
+                        </p>
+                    {% endif %}
+
+                    {% if item.average_rating %}
+                        <p class="mb-1">
+                            ★ {{ "%.1f"|format(item.average_rating) }} / 5
+                        </p>
+                    {% endif %}
+
+                    <p class="card-text">
+                        {{ item.description[:200] }}...
+                    </p>
+
+                    {% if item.url %}
+                        <a href="{{ item.url }}" target="_blank" 
+                        class="btn btn-sm btn-outline-primary">
+                            Ver en tienda
+                        </a>
+                    {% endif %}
                 </div>
+
+                {% if item.images and item.images|length > 0 %}
+                    <div style="width: 140px;" class="d-flex align-items-start justify-content-end">
+                        <img src="{{ item.images[0] }}"
+                            alt="Product Image"
+                            class="img-fluid rounded"
+                            style="max-width: 100%; max-height: 140px; object-fit: contain;">
+                    </div>
+                {% endif %}
+
+            </div>
         </div>
     {% else %}
         <div class="alert alert-warning">No results found.</div>
     {% endfor %}
+
 {% endblock %}

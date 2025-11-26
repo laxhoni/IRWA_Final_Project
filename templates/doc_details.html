@@ -6,14 +6,15 @@
     <a href="javascript:history.back()" class="btn btn-outline-primary mb-3">&larr; Back to Results</a>
 
     <div class="row">
-        <div class="col-md-6">
-            {% if images and images|length > 0 %}
-                <img src="{{ images[0] }}" class="img-fluid rounded shadow-sm" alt="Product Image">
+        <div class="col-md-6 d-flex align-items-center justify-content-center mb-3">
+            {% if product.images and product.images|length > 0 %}
+                <img src="{{ product.images[0] }}" class="img-fluid rounded shadow-sm" alt="Product Image">
             {% else %}
                 <div class="bg-light d-flex align-items-center justify-content-center rounded" style="height: 300px;">
                     No Image Available
                 </div>
             {% endif %}
+
         </div>
         <div class="col-md-6">
             <h2 class="text-primary">{{ product.title }}</h2>
