@@ -21,10 +21,23 @@
             <p class="text-muted">PID: {{ product.pid }}</p>
             
             <div class="my-3">
-                <h3 class="text-danger">{{ product.actual_price }} <small class="text-muted text-decoration-line-through">{{ product.selling_price }}</small></h3>
+                <h3 class="text-danger">
+                    {% if product.selling_price %}
+                        {{ product.selling_price }}€
+                    {% else %}
+                        {{ product.actual_price }}€
+                    {% endif %}
+                    {% if product.actual_price and product.selling_price %}
+                        <small class="text-muted" style="text-decoration: line-through;">
+                            {{ product.actual_price }}€
+                        </small>
+                    {% endif %}
+
+                </h3>
                 <span class="badge badge-warning">★ {{ product.average_rating }} Rating</span>
                 <span class="badge badge-info">{{ product.brand }}</span>
             </div>
+
 
             <h4>Description</h4>
             <p>{{ product.description }}</p>

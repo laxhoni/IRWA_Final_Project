@@ -104,7 +104,9 @@ class SearchEngine:
                 url=doc_original.url,
                 details_url=f"/doc_details?pid={doc_original.pid}&search_id={search_id}",
                 ranking=score,
+                selling_price=doc_original.selling_price,
                 actual_price=doc_original.actual_price,
+                discount=doc_original.discount,
                 average_rating=doc_original.average_rating,
                 images=doc_original.images
             )

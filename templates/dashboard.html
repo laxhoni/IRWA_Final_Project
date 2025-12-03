@@ -10,13 +10,12 @@
         #vis, #vis_sessions {
             width: 100%;
             min-height: 300px;
-            border: 1px dashed #ccc; /* Borde para ver dónde debería estar */
+            border: 1px dashed #ccc;
             display: flex;
             align-items: center;
             justify-content: center;
             margin-bottom: 1rem;
         }
-        /* Forzar tamaño del canvas si se genera */
         #vis canvas, #vis_sessions canvas {
             max-width: 100% !important;
             height: auto !important;
@@ -30,34 +29,33 @@
 
     <div class="card shadow-sm mb-4">
         <div class="card-header bg-white font-weight-bold">
-            Visualización de Visitas
+            Visits overview
         </div>
         <div class="card-body">
-            <div id="vis">Cargando gráfico...</div>
+            <div id="vis">Loading chart...</div>
         </div>
     </div>
 
     <div class="card shadow-sm mb-5">
         <div class="card-header bg-white font-weight-bold">
-            Queries por Sesión
+            Queries per session
         </div>
         <div class="card-body">
-            <div id="vis_sessions">Cargando gráfico...</div>
+            <div id="vis_sessions">Loading chart...</div>
         </div>
     </div>
 
-    <!-- Tabla detalle visitas -->
     <div class="card shadow-sm">
         <div class="card-header bg-white font-weight-bold">
-            Detalle de Visitas
+            Visits detail
         </div>
         <div class="card-body">
             <table class="table table-striped">
                 <thead>
                     <tr>
                         <th>Doc ID</th>
-                        <th>Visitas</th>
-                        <th>Descripción</th>
+                        <th>Visits</th>
+                        <th>Description</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -69,7 +67,9 @@
                     </tr>
                     {% else %}
                     <tr>
-                        <td colspan="3" class="text-center">No hay datos. ¡Haz clic en algunos productos!</td>
+                        <td colspan="3" class="text-center">
+                            No data yet. Click on some products to generate analytics!
+                        </td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -80,55 +80,53 @@
 
 <script type="text/javascript">
     document.addEventListener("DOMContentLoaded", function() {
-        // ----- Gráfico 1: documentos visitados -----
         var rawSpec = {{ chart_json | tojson }};
         
         if (!rawSpec) {
             document.getElementById('vis').innerHTML = 
-                "<div class='alert alert-warning text-center p-5'><h4>📉 No data available yet</h4><p>Go search and click on some products to generate analytics!</p></div>";
+                "<div class='alert alert-warning text-center p-5'><h4>📉 No data available yet</h4><p>Run some searches and click on products to generate analytics.</p></div>";
         } else {
             try {
                 var spec = (typeof rawSpec === 'string') ? JSON.parse(rawSpec) : rawSpec;
 
                 vegaEmbed('#vis', spec, {actions: false})
                     .then(function(result) {
-                        console.log("Gráfico de visitas renderizado correctamente.");
+                        console.log("Visits chart rendered correctly.");
                     })
                     .catch(function(error) {
-                        console.error("Error Vega:", error);
+                        console.error("Vega error:", error);
                         document.getElementById('vis').innerHTML = 
-                            "<div class='alert alert-danger'>Error visualizando el gráfico: " + error.message + "</div>";
+                            "<div class='alert alert-danger'>Error rendering chart: " + error.message + "</div>";
                     });
             } catch (e) {
                 console.error("Error parsing JSON:", e);
                 document.getElementById('vis').innerHTML = 
-                    "<div class='alert alert-danger'>Error procesando datos del servidor.</div>";
+                    "<div class='alert alert-danger'>Error processing data from server.</div>";
             }
         }
 
-        // ----- Gráfico 2: queries por sesión -----
         var rawSessionsSpec = {{ sessions_chart_json | tojson }};
         
         if (!rawSessionsSpec) {
             document.getElementById('vis_sessions').innerHTML = 
-                "<div class='alert alert-info text-center p-5'><h4>ℹ️ No session data yet</h4><p>Realiza algunas búsquedas para generar sesiones.</p></div>";
+                "<div class='alert alert-info text-center p-5'><h4>ℹ️ No session data yet</h4><p>Run a few searches to generate sessions.</p></div>";
         } else {
             try {
                 var spec2 = (typeof rawSessionsSpec === 'string') ? JSON.parse(rawSessionsSpec) : rawSessionsSpec;
 
                 vegaEmbed('#vis_sessions', spec2, {actions: false})
                     .then(function(result) {
-                        console.log("Gráfico de sesiones renderizado correctamente.");
+                        console.log("Sessions chart rendered correctly.");
                     })
                     .catch(function(error) {
-                        console.error("Error Vega (sessions):", error);
+                        console.error("Vega error (sessions):", error);
                         document.getElementById('vis_sessions').innerHTML = 
-                            "<div class='alert alert-danger'>Error visualizando el gráfico de sesiones: " + error.message + "</div>";
+                            "<div class='alert alert-danger'>Error rendering sessions chart: " + error.message + "</div>";
                     });
             } catch (e) {
                 console.error("Error parsing JSON (sessions):", e);
                 document.getElementById('vis_sessions').innerHTML = 
-                    "<div class='alert alert-danger'>Error procesando datos de sesiones.</div>";
+                    "<div class='alert alert-danger'>Error processing session data.</div>";
             }
         }
     });

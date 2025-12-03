@@ -104,7 +104,9 @@ class ResultItem(BaseModel):
     url: Optional[str] = None
     details_url: Optional[str] = None
     ranking: Optional[float] = None
+    selling_price: Optional[float] = None  
     actual_price: Optional[float] = None
+    discount: Optional[float] = None      
     average_rating: Optional[float] = None
     images: Optional[List[str]] = None
 

@@ -75,7 +75,13 @@ class RAGGenerator:
                 doc.description[:150].replace("\n", " ")
                 if doc.description else "Sin descripción disponible"
             )
-            price = f"{doc.actual_price}€" if doc.actual_price is not None else "precio desconocido"
+            if doc.selling_price is not None:
+                price = f"{doc.selling_price}€"
+            elif doc.actual_price is not None:
+                price = f"{doc.actual_price}€"
+            else:
+                price = "precio desconocido"
+
             rating = (
                 f"{doc.average_rating}/5"
                 if doc.average_rating is not None else "sin rating"

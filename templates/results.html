@@ -32,14 +32,14 @@
                         ID: {{ item.pid }}
                     </h6>
 
-                    {% if item.actual_price or item.selling_price %}
+                    {% if item.selling_price or item.actual_price %}
                         <p class="mb-1">
-                            {% if item.actual_price %}
-                                <strong>{{ item.actual_price }}€</strong>
-                            {% endif %}
                             {% if item.selling_price %}
-                                <span class="text-muted text-decoration-line-through">
-                                    {{ item.selling_price }}€
+                                <strong>{{ item.selling_price }}€</strong>
+                            {% endif %}
+                            {% if item.actual_price and item.selling_price %}
+                                <span class="text-muted" style="text-decoration: line-through;">
+                                    {{ item.actual_price }}€
                                 </span>
                             {% endif %}
                             {% if item.discount %}
@@ -49,6 +49,7 @@
                             {% endif %}
                         </p>
                     {% endif %}
+
 
                     {% if item.average_rating %}
                         <p class="mb-1">
