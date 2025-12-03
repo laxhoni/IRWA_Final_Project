@@ -104,7 +104,7 @@ Productos candidatos del catálogo:
 {context_text}
 
 Tarea:
-- En 3-4 frases en español, resume qué tipo de productos encajan mejor con la consulta.
+- En 3-4 frases, resume qué tipo de productos encajan mejor con la consulta.
 - Recomienda 2 o 3 productos concretos de la lista, mencionando su título.
 - Usa la información de precio y rating cuando sea útil.
 - No inventes productos nuevos ni características que no estén en la lista .
